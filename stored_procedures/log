@@ -1,0 +1,25 @@
+-- Create Log table
+-- This table is used to store log information for the stored procedures, such as start time, end time, rows inserted, checksums, and errors.
+CREATE OR REPLACE TABLE Log (
+    LogID INT AUTOINCREMENT, -- This column is the primary key
+    ProcedureName STRING, -- This column stores the name of the stored procedure
+    StartTime TIMESTAMP, -- This column stores the start time of the stored procedure execution
+    EndTime TIMESTAMP, -- This column stores the end time of the stored procedure execution
+    RowsInserted INT, -- This column stores the number of rows inserted by the stored procedure
+    ChecksumBefore BIGINT, -- This column stores the checksum of the target table before the insertion
+    ChecksumAfter BIGINT, -- This column stores the checksum of the target table after the insertion
+    Errors STRING -- This column stores any errors encountered by the stored procedure
+);
+
+-- Annotate the table with a description
+COMMENT ON TABLE Log IS 'Table to store log information for the stored procedures.';
+
+-- Annotate the columns with descriptions
+COMMENT ON COLUMN Log.LogID IS 'This column is the primary key.';
+COMMENT ON COLUMN Log.ProcedureName IS 'This column stores the name of the stored procedure.';
+COMMENT ON COLUMN Log.StartTime IS 'This column stores the start time of the stored procedure execution.';
+COMMENT ON COLUMN Log.EndTime IS 'This column stores the end time of the stored procedure execution.';
+COMMENT ON COLUMN Log.RowsInserted IS 'This column stores the number of rows inserted by the stored procedure.';
+COMMENT ON COLUMN Log.ChecksumBefore IS 'This column stores the checksum of the target table before the insertion.';
+COMMENT ON COLUMN Log.ChecksumAfter IS 'This column stores the checksum of the target table after the insertion.';
+COMMENT ON COLUMN Log.Errors IS 'This column stores any errors encountered by the stored procedure.';

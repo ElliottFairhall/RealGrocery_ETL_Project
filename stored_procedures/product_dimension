@@ -1,0 +1,17 @@
+-- Create Product Dimension table
+-- This table is used to store product details, such as name, category, and product URL.
+CREATE OR REPLACE TABLE ProductDimension (
+    ProductID NUMBER AUTOINCREMENT, -- This column is the primary key
+    Name STRING, -- This column stores the name of the product
+    Category STRING, -- This column stores the category of the product
+    ProductURL STRING -- This column stores the URL of the product
+);
+
+-- Annotate the table with a description
+COMMENT ON TABLE ProductDimension IS 'Table to store product details, such as name, category, and product URL.';
+
+-- Annotate the columns with descriptions
+COMMENT ON COLUMN ProductDimension.ProductID IS 'This column is the primary key.';
+COMMENT ON COLUMN ProductDimension.Name IS 'This column stores the name of the product.';
+COMMENT ON COLUMN ProductDimension.Category IS 'This column stores the category of the product.';
+COMMENT ON COLUMN ProductDimension.ProductURL IS 'This column stores the URL of the product.';

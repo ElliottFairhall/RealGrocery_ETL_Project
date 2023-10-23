@@ -1,0 +1,18 @@
+-- Create Sales Fact table
+CREATE OR REPLACE TABLE SalesFact (
+    SalesID NUMBER AUTOINCREMENT, -- This column is the Primary key for the sales transactions
+    ProductID NUMBER, -- This column is the Identifier for the product
+    PriceID NUMBER, -- This column is the Identifier for the price
+    Quantity DECIMAL(10, 2), -- This column stores the quantity of the product sold
+    TotalSales DECIMAL(10, 2), -- This column stores the total sales amount
+);
+
+-- Annotate the table with a description
+COMMENT ON TABLE SalesFact IS 'Table to store sales transactions, including quantity and total sales amount.';
+
+-- Annotate the columns with descriptions
+COMMENT ON COLUMN SalesFact.SalesID IS 'This column is the Primary key for the sales transactions';
+COMMENT ON COLUMN SalesFact.ProductID IS 'This column is the Identifier for the product';
+COMMENT ON COLUMN SalesFact.PriceID IS 'This column is the Identifier for the price';
+COMMENT ON COLUMN SalesFact.Quantity IS 'This column stores the quantity of the product sold';
+COMMENT ON COLUMN SalesFact.TotalSales IS 'This column stores the total sales amount';

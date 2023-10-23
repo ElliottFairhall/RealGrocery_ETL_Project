@@ -1,0 +1,17 @@
+-- Create Price Dimension table
+-- This table is used to store price information for products, including current and previous prices.
+CREATE OR REPLACE TABLE PriceDimension (
+    PriceID NUMBER AUTOINCREMENT, -- This column is the primary key
+    ProductID NUMBER, -- This column stores the product ID
+    PriceType STRING, -- This column stores the type of price (e.g., current, previous)
+    Price DECIMAL(10, 2) -- This column stores the price of the product
+);
+
+-- Annotate the table with a description
+COMMENT ON TABLE PriceDimension IS 'Table to store price information for products, including current and previous prices.';
+
+-- Annotate the columns with descriptions
+COMMENT ON COLUMN PriceDimension.PriceID IS 'This column is the primary key.';
+COMMENT ON COLUMN PriceDimension.ProductID IS 'This column stores the product ID.';
+COMMENT ON COLUMN PriceDimension.PriceType IS 'This column stores the type of price (e.g., current, previous).';
+COMMENT ON COLUMN PriceDimension.Price IS 'This column stores the price of the product.';

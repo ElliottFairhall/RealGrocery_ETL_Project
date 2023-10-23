@@ -1,0 +1,102 @@
+-- Create a stored procedure to insert data
+CREATE OR REPLACE PROCEDURE InsertDataFromJSON()
+RETURNS STRING
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+BEGIN
+    -- Declare variables to store JSON data and fields
+    DECLARE json_data VARIANT;
+    DECLARE product_id INT;
+    DECLARE name STRING;
+    DECLARE category STRING;
+    DECLARE product_url STRING;
+    DECLARE current_price DECIMAL(10, 2);
+    DECLARE previous_price DECIMAL(10, 2);
+    DECLARE price_per_each STRING;
+    DECLARE quantity DECIMAL(10, 2);
+    DECLARE total_sales DECIMAL(10, 2);
+
+    -- Declare variables to store log information
+    DECLARE start_time TIMESTAMP;
+    DECLARE end_time TIMESTAMP;
+    DECLARE rows_inserted INT;
+    DECLARE checksum_before BIGINT;
+    DECLARE checksum_after BIGINT;
+    DECLARE errors STRING;
+
+    -- Set start time and initialize other log variables
+    SET start_time = CURRENT_TIMESTAMP;
+    SET end_time = NULL;
+    SET rows_inserted = 0;
+    SET errors = '';
+
+    -- Calculate initial checksums for reconciliation
+    SET checksum_before = (SELECT SUM(HASH(*)) FROM Your_JSON_TABLE);
+
+    -- Declare a cursor to iterate through JSON data
+    FOR json_cursor IN (SELECT JSON_DATA FROM Your_JSON_TABLE) -- Replace with your JSON table
+        LOOP
+            -- Set the JSON data variable
+            SET json_data = json_cursor.JSON_DATA;
+
+            -- Extract and set data fields from JSON data
+            SET product_id = TRY_TO_NUMBER(json_data:Product_ID);
+            SET name = json_data:Name;
+            SET category = json_data:Category;
+            SET product_url = json_data:Product_URL;
+            SET current_price = TRY_TO_NUMBER(REPLACE(REPLACE(json_data:Current_Price, '$', ''), ',', ''));
+            SET previous_price = TRY_TO_NUMBER(REPLACE(REPLACE(json_data:Previous_Price, '$', ''), ',', ''));
+            SET price_per_each = json_data:Price_Per_Each;
+
+            -- Insert data into Product Dimension and update rows inserted count
+            INSERT INTO ProductDimension (ProductID, Name, Category, ProductURL)
+            VALUES (product_id, name, category, product_url);
+            SET rows_inserted = rows_inserted + ROW_COUNT();
+
+            -- Insert data into Price Dimension and update rows inserted count
+            INSERT INTO PriceDimension (ProductID, PriceType, Price)
+            VALUES (product_id, 'Current Price', current_price);
+            SET rows_inserted = rows_inserted + ROW_COUNT();
+
+            INSERT INTO PriceDimension (ProductID, PriceType, Price)
+            VALUES (product_id, 'Previous Price', previous_price);
+            SET rows_inserted = rows_inserted + ROW_COUNT();
+
+            -- Calculate Quantity and Total Sales
+            SET quantity = TRY_TO_NUMBER(SPLIT_PART(SPLIT_PART(price_per_each, '/', 2), 'kg', 1));
+            SET total_sales = quantity * current_price;
+
+            -- Insert data into Sales Fact and update rows inserted count
+            INSERT INTO SalesFact (ProductID, PriceID, Quantity, TotalSales)
+            VALUES (product_id, current_price_id, quantity, total_sales);
+            SET rows_inserted = rows_inserted + ROW_COUNT();
+        END LOOP;
+
+        -- Calculate final checksums for reconciliation
+        SET checksum_after = (SELECT SUM(HASH(*)) FROM Your_JSON_TABLE);
+
+        -- Set end time
+        SET end_time = CURRENT_TIMESTAMP;
+
+        -- Insert log information into Log table
+        INSERT INTO Log (ProcedureName, StartTime, EndTime, RowsInserted, ChecksumBefore, ChecksumAfter)
+        VALUES ('InsertDataFromJSON', start_time, end_time, rows_inserted, checksum_before, checksum_after);
+
+        RETURN 'Data inserted successfully.';
+    
+EXCEPTION WHEN OTHERS THEN 
+        -- Handle any errors that may occur during execution
+
+        -- Set error message using ERROR_MESSAGE function
+        SET errors = ERROR_MESSAGE();
+
+        -- Insert log information into Log table with error message
+        INSERT INTO Log (ProcedureName, StartTime, EndTime, RowsInserted, Errors)
+        VALUES ('InsertDataFromJSON', start_time, end_time, rows_inserted, errors);
+
+        RETURN 'Data insertion failed.';
+END;
+
+-- Annotate the stored procedure with a description 
+COMMENT ON PROCEDURE InsertDataFromJSON() IS ‘Stored procedure to insert data from JSON into the data warehouse tables.’;
