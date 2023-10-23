@@ -1,7 +1,7 @@
 
 # RealGrocery - ETL, Data Warehouse, and Data Mart Design Project
 
-![alt text](../assets/RealGroceryCompany.jpg)
+![alt text](/assets/RealGroceryCompany.jpg)
 
 **Please note that RealGrocery is a fictitious company and this project is part of my personal collection of projects.**
 
