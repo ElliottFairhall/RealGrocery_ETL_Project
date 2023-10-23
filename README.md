@@ -56,4 +56,8 @@ The following steps outline what steps are required to meet the MVP:
 
 This project is based on the dataset from Kaggle: [Real Canadian Superstore Grocery Data]. The dataset was created by Maxim Sakhan, a data analyst and enthusiast. The dataset contains product information scraped from the Real Canadian Superstore website. The dataset was last updated on July 6, 2021.
 
+<<<<<<< HEAD
 : https://www.kaggle.com/datasets/maximsakhan/rc-superstore-grocery-data/?select=products_raw_data.csv
+=======
+: https://www.kaggle.com/datasets/maximsakhan/rc-superstore-grocery-data/?select=products_raw_data.csv
+>>>>>>> 052fe7accd89e9859e63123eec9c808a08da1eb1
